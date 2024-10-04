@@ -19,14 +19,14 @@ class GameDetailScreen extends StatelessWidget {
             Container(
               width: 200,
               height: 200,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: game.imageUrl.isNotEmpty
-                      ? AssetImage(game.imageUrl) // Imagem local
-                      : NetworkImage(game.imageUrl) as ImageProvider, // Imagem da web
-                  fit: BoxFit.cover,
-                ),
-              ),
+              child: game.imageUrl.isNotEmpty
+                  ? Image(
+                image: game.imageUrl.startsWith('http')
+                    ? NetworkImage(game.imageUrl)
+                    : AssetImage(game.imageUrl) as ImageProvider,
+                fit: BoxFit.cover,
+              )
+                  : const Placeholder(),
             ),
             const SizedBox(height: 20),
             Text(
@@ -36,7 +36,6 @@ class GameDetailScreen extends StatelessWidget {
             const SizedBox(height: 10),
             Text('R\$ ${game.price.toStringAsFixed(2)}', style: const TextStyle(fontSize: 20)),
             const SizedBox(height: 10),
-            // Adicione outras informações sobre o jogo aqui
           ],
         ),
       ),

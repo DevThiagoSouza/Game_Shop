@@ -68,16 +68,16 @@ class _PaymentScreenState extends State<PaymentScreen> with SingleTickerProvider
                     child: Stack(
                       children: [
                         Positioned(
-                          top: 70, // Mova a imagem para o centro vertical do cartão
-                          left: 10, // Coloque a imagem à esquerda
+                          top: 70,
+                          left: 10,
                           child: Image.asset(
-                            'lib/assets/images/chip.png', // Adicione um chip de cartão
+                            'lib/assets/images/chip.png',
                             width: 40,
                           ),
                         ),
                         Positioned(
                           top: 60,
-                          left: 70, // Ajuste a posição do texto para não se sobrepor ao chip
+                          left: 70,
                           child: const Text(
                             'Cartão de Crédito',
                             style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
@@ -85,7 +85,7 @@ class _PaymentScreenState extends State<PaymentScreen> with SingleTickerProvider
                         ),
                         Positioned(
                           top: 90,
-                          left: 70, // Ajuste a posição do texto para não se sobrepor ao chip
+                          left: 70,
                           child: const Text(
                             '**** **** **** 1234',
                             style: TextStyle(color: Colors.white, fontSize: 24),
@@ -93,7 +93,7 @@ class _PaymentScreenState extends State<PaymentScreen> with SingleTickerProvider
                         ),
                         Positioned(
                           bottom: 30,
-                          left: 70, // Ajuste a posição do texto para não se sobrepor ao chip
+                          left: 70,
                           child: const Text(
                             'Validade: 12/25',
                             style: TextStyle(color: Colors.white, fontSize: 16),
@@ -101,7 +101,7 @@ class _PaymentScreenState extends State<PaymentScreen> with SingleTickerProvider
                         ),
                         Positioned(
                           bottom: 10,
-                          left: 70, // Ajuste a posição do texto para não se sobrepor ao chip
+                          left: 70,
                           child: const Text(
                             'Nome do Titular',
                             style: TextStyle(color: Colors.white, fontSize: 16),

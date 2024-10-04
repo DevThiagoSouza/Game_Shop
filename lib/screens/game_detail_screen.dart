@@ -29,7 +29,6 @@ class GameDetailScreen extends StatelessWidget {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    // Ação para adicionar ao carrinho
                   },
                   child: const Text('Adicionar ao Carrinho'),
                 ),

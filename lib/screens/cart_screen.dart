@@ -1,30 +1,28 @@
 import 'package:flutter/material.dart';
-import '../models/game.dart';
+import 'package:provider/provider.dart';
 import '../pay/payment_screen.dart';
 import '../widgets/cart_item.dart';
- // Importa a tela de pagamento
+import '../widgets/card.dart';
 
 class CartScreen extends StatelessWidget {
-  final List<Game> cartItems;
-
-  const CartScreen({Key? key, required this.cartItems}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
+    final cart = Provider.of<Cart>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Carrinho'),
       ),
-      body: cartItems.isEmpty
+      body: cart.items.isEmpty
           ? const Center(child: Text('Seu carrinho está vazio!'))
           : ListView.builder(
-        itemCount: cartItems.length,
+        itemCount: cart.items.length,
         itemBuilder: (context, index) {
-          final game = cartItems[index];
+          final game = cart.items[index];
           return CartItem(
             game: game,
             onRemove: () {
-              // Ação para remover o item do carrinho
+              cart.removeGame(game);
             },
           );
         },

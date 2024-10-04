@@ -38,7 +38,6 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                // Lógica para salvar as informações do perfil
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Perfil atualizado!')),
                 );

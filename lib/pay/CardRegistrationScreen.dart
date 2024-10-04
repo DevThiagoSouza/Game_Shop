@@ -14,19 +14,21 @@ class _CardRegistrationScreenState extends State<CardRegistrationScreen> with Si
   final TextEditingController _cardNumberController = TextEditingController();
   final TextEditingController _expiryDateController = TextEditingController();
   final TextEditingController _cardHolderController = TextEditingController();
+  final TextEditingController _cvvController = TextEditingController();
 
   bool _isSubmitting = false;
+  bool _showBack = false;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 1),
       vsync: this,
     );
     _animation = CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeIn,
+      curve: Curves.easeInOut,
     );
   }
 
@@ -36,6 +38,7 @@ class _CardRegistrationScreenState extends State<CardRegistrationScreen> with Si
     _cardNumberController.dispose();
     _expiryDateController.dispose();
     _cardHolderController.dispose();
+    _cvvController.dispose();
     super.dispose();
   }
 
@@ -44,16 +47,22 @@ class _CardRegistrationScreenState extends State<CardRegistrationScreen> with Si
       _isSubmitting = true;
     });
     _controller.forward();
-
-    // Simula um atraso para o cadastro do cartão
     await Future.delayed(const Duration(seconds: 2));
-
-    // Aqui você pode adicionar a lógica para salvar os dados do cartão
-
     setState(() {
       _isSubmitting = false;
       _controller.reset();
-      Navigator.pop(context); // Voltar à tela anterior
+      Navigator.pop(context);
+    });
+  }
+
+  void _toggleCard() {
+    setState(() {
+      _showBack = !_showBack;
+      if (_showBack) {
+        _controller.forward();
+      } else {
+        _controller.reverse();
+      }
     });
   }
 
@@ -63,25 +72,66 @@ class _CardRegistrationScreenState extends State<CardRegistrationScreen> with Si
       appBar: AppBar(
         title: const Text('Cadastrar Cartão'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextField(
-              controller: _cardNumberController,
-              decoration: const InputDecoration(labelText: 'Número do Cartão'),
-              keyboardType: TextInputType.number,
+            GestureDetector(
+              onTap: _toggleCard,
+              child: AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.rotationY(_animation.value * 3.14), // 180 degrees
+                    child: Container(
+                      width: 300,
+                      height: 180,
+                      decoration: BoxDecoration(
+                        color: Colors.blueAccent,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: _showBack ? _buildCardBack() : _buildCardFront(),
+                    ),
+                  );
+                },
+              ),
             ),
-            TextField(
-              controller: _expiryDateController,
-              decoration: const InputDecoration(labelText: 'Validade (MM/AA)'),
-              keyboardType: TextInputType.datetime,
-            ),
-            TextField(
-              controller: _cardHolderController,
-              decoration: const InputDecoration(labelText: 'Nome do Titular'),
-            ),
+            const SizedBox(height: 20),
+            if (_showBack)
+              TextField(
+                controller: _cvvController,
+                decoration: const InputDecoration(labelText: 'CVV'),
+                keyboardType: TextInputType.number,
+                obscureText: true,
+                onChanged: (value) => setState(() {}),
+              )
+            else ...[
+              TextField(
+                controller: _cardNumberController,
+                decoration: const InputDecoration(labelText: 'Número do Cartão'),
+                keyboardType: TextInputType.number,
+                onChanged: (value) => setState(() {}),
+              ),
+              TextField(
+                controller: _expiryDateController,
+                decoration: const InputDecoration(labelText: 'Validade (MM/AA)'),
+                keyboardType: TextInputType.datetime,
+                onChanged: (value) => setState(() {}),
+              ),
+              TextField(
+                controller: _cardHolderController,
+                decoration: const InputDecoration(labelText: 'Nome do Titular'),
+                onChanged: (value) => setState(() {}),
+              ),
+            ],
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _isSubmitting ? null : _submit,
@@ -96,6 +146,53 @@ class _CardRegistrationScreenState extends State<CardRegistrationScreen> with Si
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildCardFront() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          'Cartão de Crédito',
+          style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          _cardNumberController.text.isEmpty ? '**** **** **** ****' : _cardNumberController.text,
+          style: const TextStyle(color: Colors.white, fontSize: 24),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          _expiryDateController.text.isEmpty ? 'Validade: --/--' : 'Validade: ${_expiryDateController.text}',
+          style: const TextStyle(color: Colors.white, fontSize: 16),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          _cardHolderController.text.isEmpty ? 'Nome do Titular' : _cardHolderController.text,
+          style: const TextStyle(color: Colors.white, fontSize: 16),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCardBack() {
+    return Container(
+      color: Colors.black,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'CVV',
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            _cvvController.text.isEmpty ? '***' : _cvvController.text,
+            style: const TextStyle(color: Colors.white, fontSize: 24),
+          ),
+        ],
       ),
     );
   }

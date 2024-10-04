@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
-
+import 'package:provider/provider.dart';
+import 'widgets/card.dart';
+import 'widgets/favorite_games.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => Cart()),
+        ChangeNotifierProvider(create: (context) => FavoriteGames()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -13,8 +23,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Mario Verde',
-      theme: ThemeData.dark(), // Define o tema escuro
-      home:  HomeScreen(),
+      theme: ThemeData.dark(),
+      home: const HomeScreen(),
     );
   }
 }
