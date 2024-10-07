@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'CardRegistrationScreen.dart';
+import '../pay/CardRegistrationScreen.dart';
+import 'package:provider/provider.dart';
+import '../widgets/card.dart';
 
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({Key? key}) : super(key: key);
@@ -11,6 +13,9 @@ class PaymentScreen extends StatefulWidget {
 class _PaymentScreenState extends State<PaymentScreen> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+
+  String _selectedPaymentMethod = 'cartao';
+  final List<String> _paymentMethods = ['cartao', 'boleto', 'pix'];
 
   @override
   void initState() {
@@ -33,6 +38,8 @@ class _PaymentScreenState extends State<PaymentScreen> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
+    final cart = Provider.of<Cart>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pagamento'),
@@ -121,17 +128,58 @@ class _PaymentScreenState extends State<PaymentScreen> with SingleTickerProvider
               ],
             ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CardRegistrationScreen()),
-              );
-            },
-            child: const Text('Cadastrar Novo Cartão'),
+          Column(
+            children: [
+              Text(
+                'Total: R\$ ${cart.totalPrice.toStringAsFixed(2)}',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              DropdownButton<String>(
+                value: _selectedPaymentMethod,
+                items: _paymentMethods.map((String method) {
+                  return DropdownMenuItem<String>(
+                    value: method,
+                    child: Text(method == 'cartao' ? 'Cartão de Crédito/Débito' : method.capitalize()),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedPaymentMethod = newValue!;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  // Lógica de pagamento
+                  // Aqui você pode implementar a lógica para processar o pagamento
+                },
+                child: const Text('Finalizar Pagamento'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const CardRegistrationScreen()),
+                  );
+                },
+                child: const Text('Cadastrar Novo Cartão'),
+              ),
+            ],
           ),
         ],
       ),
     );
+  }
+}
+
+// Extensão para capitalizar a primeira letra
+extension StringCasingExtension on String {
+  String capitalize() {
+    if (this == null) {
+      throw Exception('String cannot be null');
+    }
+    return '${this[0].toUpperCase()}${this.substring(1)}';
   }
 }

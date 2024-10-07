@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:provider/provider.dart';
 import '../models/game.dart';
+import '../services/game_service.dart';
+import '../widgets/card.dart';
+import '../widgets/favorite_games.dart';
 import '../widgets/game_card.dart';
 import 'cart_screen.dart';
+import 'favorite_games_screen.dart';
+import 'profile_screen.dart';
 import '../widgets/pre_orders_screen.dart';
 import '../widgets/best_sellers_screen.dart';
-import '../services/game_service.dart';
-import 'profile_screen.dart';
-import '../widgets/card.dart';
+import 'package:badges/badges.dart' as badges;
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -24,13 +27,35 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Game Store'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            onPressed: () {
-              final cartItems = Provider.of<Cart>(context, listen: false).items;
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CartScreen()),
+          Consumer<FavoriteGames>(
+            builder: (context, favoriteGames, child) {
+              return IconButton(
+                icon: badges.Badge(
+                  badgeContent: Text('${favoriteGames.favorites.length}'),
+                  child: const Icon(Icons.favorite),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FavoriteGamesScreen()),
+                  );
+                },
+              );
+            },
+          ),
+          Consumer<Cart>(
+            builder: (context, cart, child) {
+              return IconButton(
+                icon: badges.Badge(
+                  badgeContent: Text('${cart.totalItems}'),
+                  child: const Icon(Icons.shopping_cart),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CartScreen()),
+                  );
+                },
               );
             },
           ),
@@ -102,11 +127,7 @@ class HomeScreen extends StatelessWidget {
           Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           TextButton(
             onPressed: () {
-              if (title == 'Mais Vendidos') {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => BestSellersScreen(games: games, bestSellers: [])));
-              } else if (title == 'Pré-Vendas') {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => PreOrdersScreen(games: games, preOrders: [])));
-              }
+              // Lógica para navegar para a tela correspondente
             },
             child: const Text('Ver Todos'),
           ),
@@ -142,14 +163,13 @@ class HomeScreen extends StatelessWidget {
           ),
           _buildDrawerItem(context, Icons.home, 'Home', () => Navigator.pop(context)),
           _buildDrawerItem(context, Icons.shopping_cart, 'Carrinho', () {
-            final cartItems = Provider.of<Cart>(context, listen: false).items;
-            Navigator.push(context,  MaterialPageRoute(builder: (context) => CartScreen()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => CartScreen()));
           }),
           _buildDrawerItem(context, Icons.star, 'Mais Vendidos', () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => BestSellersScreen(games: bestSellers, bestSellers: [])));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => BestSellersScreen(games: bestSellers, bestSellers: [],)));
           }),
           _buildDrawerItem(context, Icons.new_releases, 'Pré-Vendas', () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => PreOrdersScreen(games: preOrders, preOrders: [])));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => PreOrdersScreen(games: preOrders, preOrders: [],)));
           }),
           const Divider(),
           _buildDrawerItem(context, Icons.person, 'Perfil', () {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loja_games_project/pay/payment_screen.dart';
 import 'screens/home_screen.dart';
 import 'package:provider/provider.dart';
 import 'widgets/card.dart';
@@ -25,6 +26,9 @@ class MyApp extends StatelessWidget {
       title: 'Mario Verde',
       theme: ThemeData.dark(),
       home: const HomeScreen(),
+      routes: {
+        '/payment': (context) => const PaymentScreen(),
+      },
     );
   }
 }

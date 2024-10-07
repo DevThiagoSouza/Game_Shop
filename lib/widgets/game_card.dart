@@ -3,8 +3,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import '../models/game.dart';
 import '../screens/game_detail_screen.dart';
+import '../widgets/favorite_games.dart';
 import 'card.dart';
-import 'favorite_games.dart';
 
 class GameCard extends StatelessWidget {
   final Game game;
@@ -33,8 +33,6 @@ class GameCard extends StatelessWidget {
             _buildTitle(),
             const SizedBox(height: 4),
             _buildPrice(),
-            const SizedBox(height: 8),
-            _buildPlatformIcons(),
             const SizedBox(height: 8),
             _buildPurchaseButton(context),
           ],
@@ -103,37 +101,6 @@ class GameCard extends StatelessWidget {
 
   Widget _buildPrice() {
     return Text('R\$ ${game.price.toStringAsFixed(2)}');
-  }
-
-  Widget _buildPlatformIcons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: _buildPlatformWidgets(game.platforms),
-    );
-  }
-
-  List<Widget> _buildPlatformWidgets(List<Platform> platforms) {
-    return platforms.map((platform) {
-      switch (platform) {
-        case Platform.PlayStation:
-          return _buildPlatformIcon(FontAwesomeIcons.playstation, Colors.blue);
-        case Platform.Xbox:
-          return _buildPlatformIcon(FontAwesomeIcons.xbox, Colors.green);
-        case Platform.PC:
-          return _buildPlatformIcon(FontAwesomeIcons.laptop, Colors.grey);
-        case Platform.Switch:
-          return _buildPlatformIcon(FontAwesomeIcons.laptop, Colors.red);
-        default:
-          return Container();
-      }
-    }).toList();
-  }
-
-  Widget _buildPlatformIcon(IconData icon, Color color) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-      child: FaIcon(icon, color: color, size: 20),
-    );
   }
 
   Widget _buildPurchaseButton(BuildContext context) {
