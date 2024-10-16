@@ -6,10 +6,18 @@ import '../screens/game_detail_screen.dart';
 import '../widgets/favorite_games.dart';
 import 'card.dart';
 
-class GameCard extends StatelessWidget {
+class GameCard extends StatefulWidget {
   final Game game;
+  final ValueChanged<Game> onRemove;
 
-  const GameCard({Key? key, required this.game}) : super(key: key);
+  const GameCard({Key? key, required this.game, required this.onRemove}) : super(key: key);
+
+  @override
+  _GameCardState createState() => _GameCardState();
+}
+
+class _GameCardState extends State<GameCard> {
+  bool _isAddedToCart = false;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +28,7 @@ class GameCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => GameDetailScreen(game: game),
+            builder: (context) => GameDetailScreen(game: widget.game),
           ),
         );
       },
@@ -48,10 +56,13 @@ class GameCard extends StatelessWidget {
           width: double.infinity,
           height: 150,
           decoration: BoxDecoration(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
             image: DecorationImage(
-              image: game.imageUrl.isNotEmpty
-                  ? AssetImage(game.imageUrl)
-                  : NetworkImage(game.imageUrl) as ImageProvider,
+              image: widget.game.imageUrl.isNotEmpty
+                  ? (widget.game.imageUrl.startsWith('http')
+                  ? NetworkImage(widget.game.imageUrl)
+                  : AssetImage(widget.game.imageUrl) as ImageProvider)
+                  : AssetImage('assets/placeholder.png'), // Placeholder
               fit: BoxFit.cover,
             ),
           ),
@@ -66,7 +77,7 @@ class GameCard extends StatelessWidget {
   }
 
   Widget _buildFavoriteIcon(BuildContext context, FavoriteGames favoriteGames) {
-    final isFavorite = favoriteGames.isFavorite(game);
+    final isFavorite = favoriteGames.isFavorite(widget.game);
 
     return IconButton(
       icon: FaIcon(
@@ -74,13 +85,13 @@ class GameCard extends StatelessWidget {
         color: isFavorite ? Colors.red : Colors.grey,
       ),
       onPressed: () {
-        favoriteGames.toggleFavorite(game);
+        favoriteGames.toggleFavorite(widget.game);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               isFavorite
-                  ? '${game.title} removido dos favoritos!'
-                  : '${game.title} adicionado aos favoritos!',
+                  ? '${widget.game.title} removido dos favoritos!'
+                  : '${widget.game.title} adicionado aos favoritos!',
             ),
           ),
         );
@@ -92,7 +103,7 @@ class GameCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Text(
-        game.title,
+        widget.game.title,
         style: const TextStyle(fontWeight: FontWeight.bold),
         textAlign: TextAlign.center,
       ),
@@ -100,18 +111,49 @@ class GameCard extends StatelessWidget {
   }
 
   Widget _buildPrice() {
-    return Text('R\$ ${game.price.toStringAsFixed(2)}');
+    return Text('R\$ ${widget.game.price.toStringAsFixed(2)}');
   }
 
   Widget _buildPurchaseButton(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
-        Provider.of<Cart>(context, listen: false).addGame(game);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${game.title} adicionado ao carrinho!')),
-        );
+      onPressed: () async {
+        if (!_isAddedToCart) {
+          Provider.of<Cart>(context, listen: false).addGame(widget.game);
+          setState(() {
+            _isAddedToCart = true;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${widget.game.title} adicionado ao carrinho!')),
+          );
+        } else {
+          Provider.of<Cart>(context, listen: false).removeGame(widget.game);
+          setState(() {
+            _isAddedToCart = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${widget.game.title} removido do carrinho!')),
+          );
+          widget.onRemove(widget.game);
+        }
       },
-      child: const Text('Adicionar ao Carrinho'),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: _isAddedToCart ? Colors.green : Theme.of(context).primaryColor,
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (_isAddedToCart) ...[
+            Icon(Icons.check),
+            const SizedBox(width: 4),
+          ],
+          Text(_isAddedToCart ? 'Adicionado' : 'Adicionar ao Carrinho'),
+        ],
+      ),
     );
   }
+
 }

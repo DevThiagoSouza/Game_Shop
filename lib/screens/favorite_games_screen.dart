@@ -22,7 +22,7 @@ class FavoriteGamesScreen extends StatelessWidget {
         ),
         itemCount: favoriteGames.favorites.length,
         itemBuilder: (context, index) {
-          return GameCard(game: favoriteGames.favorites[index]);
+          return GameCard(game: favoriteGames.favorites[index], onRemove: (Game value) {  },);
         },
       ),
     );

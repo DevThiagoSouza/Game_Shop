@@ -20,7 +20,7 @@ class BestSellersScreen extends StatelessWidget {
         ),
         itemCount: bestSellers.length,
         itemBuilder: (context, index) {
-          return GameCard(game: bestSellers[index]);
+          return GameCard(game: bestSellers[index], onRemove: (Game value) {  },);
         },
       ),
     );

@@ -20,7 +20,7 @@ class PreOrdersScreen extends StatelessWidget {
         ),
         itemCount: preOrders.length,
         itemBuilder: (context, index) {
-          return GameCard(game: preOrders[index]);
+          return GameCard(game: preOrders[index], onRemove: (Game value) {  },);
         },
       ),
     );

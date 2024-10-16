@@ -11,6 +11,7 @@ class Game {
   final double price;
   final String description;
   final String videoUrl;
+  final List<String> images;
   final List<Platform> platforms;
 
   Game({
@@ -20,5 +21,6 @@ class Game {
     required this.description,
     required this.videoUrl,
     required this.platforms,
+    required this.images,
   });
 }

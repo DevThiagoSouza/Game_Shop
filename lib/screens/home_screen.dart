@@ -3,9 +3,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:provider/provider.dart';
 import '../models/game.dart';
 import '../services/game_service.dart';
+import '../widgets/AnimatedGameCard.dart';
 import '../widgets/card.dart';
 import '../widgets/favorite_games.dart';
-import '../widgets/game_card.dart';
 import 'cart_screen.dart';
 import 'favorite_games_screen.dart';
 import 'profile_screen.dart';
@@ -127,7 +127,6 @@ class HomeScreen extends StatelessWidget {
           Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           TextButton(
             onPressed: () {
-              // Lógica para navegar para a tela correspondente
             },
             child: const Text('Ver Todos'),
           ),
@@ -145,9 +144,10 @@ class HomeScreen extends StatelessWidget {
       itemCount: games.length,
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      itemBuilder: (context, index) => GameCard(game: games[index]),
+      itemBuilder: (context, index) => AnimatedGameCard(game: games[index]),
     );
   }
+
 
   Widget _buildDrawer(BuildContext context, List<Game> bestSellers, List<Game> preOrders) {
     return Drawer(
